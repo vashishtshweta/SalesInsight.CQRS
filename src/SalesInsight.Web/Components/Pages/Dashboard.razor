@@ -1,0 +1,19 @@
+﻿@page "/dashboard"
+
+<h1>Sales Dashboard</h1>
+
+@if (_summary is null)
+{
+    <p>Loading dashboard...</p>
+}
+else
+{
+    <div>
+        <p>Total Customers: @_summary.TotalCustomers</p>
+        <p>Total Products: @_summary.TotalProducts</p>
+        <p>Total Orders: @_summary.TotalOrders</p>
+        <p>Total Revenue: @_summary.TotalRevenue.ToString("C")</p>
+        <p>Low Stock Products: @_summary.LowStockProducts</p>
+    </div>
+}
+
