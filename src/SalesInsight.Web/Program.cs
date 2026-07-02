@@ -15,7 +15,7 @@ builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(GetDashboardSummaryQuery).Assembly);
 });
-builder.Services.AddScoped<IAppDbContext, AppDbContext>();
+
 builder.Services.AddHttpClient<DashboardApiClient>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? throw new InvalidOperationException("API base URL is not configured."));
