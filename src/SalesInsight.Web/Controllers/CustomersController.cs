@@ -1,0 +1,49 @@
+﻿using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using SalesInsight.Application.Commands.Customers;
+using SalesInsight.Application.DTOs.Customer;
+using SalesInsight.Application.Queries.Customers;
+
+namespace SalesInsight.Web.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class CustomersController : ControllerBase
+{
+    private readonly IMediator _mediator;
+    public CustomersController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<CustomerResponse>>> GetCustomersAsync()
+    {
+        var customers = await _mediator.Send(new GetCustomersQuery());
+        return Ok(customers);
+    
+    }
+
+    [HttpGet("id: guid")]
+    public async Task<ActionResult<CustomerResponse>> GetCustomerAsync(Guid id)
+    {
+        var customer = await _mediator.Send(new GetCustomerByIdQuery(id));
+        if(customer == null) {
+                 return NotFound();
+        }
+        return Ok(customer);
+    }
+
+
+    [HttpPost]
+
+    public async Task<ActionResult<Guid>> CreateCustomer(CreateCustomerRequest request, CancellationToken cancellationToken)
+    {
+        var command = new CreateCustomerCommand(request.CompanyName, request.ContactName, request.Email);
+        var customerId = await _mediator.Send(command,cancellationToken);
+        return CreatedAtAction(nameof(GetCustomerAsync), new { id = customerId }, customerId);
+
+    }
+
+}
