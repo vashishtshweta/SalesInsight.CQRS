@@ -3,11 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using SalesInsight.Application.DTOs;
 using SalesInsight.Application.Interfaces;
 using SalesInsight.Application.Queries.GetDashboardSummary;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SalesInsight.Application.Handlers.GetDashboardSummary
 {

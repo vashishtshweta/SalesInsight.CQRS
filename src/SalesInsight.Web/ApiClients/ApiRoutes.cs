@@ -4,5 +4,7 @@
     {
         public const string DashboardSummary = "api/dashboard/summary";
 
+        public const string CustomersBase = "api/customers";
+
     }
 }

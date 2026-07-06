@@ -1,0 +1,35 @@
+﻿@page "/customers/create"
+@rendermode InteractiveServer
+
+<h1>Add Customer</h1>
+
+<EditForm Model="_model" OnValidSubmit="CreateCustomerAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label">Company Name</label>
+        <InputText class="form-control" @bind-Value="_model.CompanyName" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Contact Name</label>
+        <InputText class="form-control" @bind-Value="_model.ContactName" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <InputText class="form-control" @bind-Value="_model.Email" />
+    </div>
+
+    <button class="btn btn-primary" type="submit" disabled="@_isSaving">
+        @(_isSaving ? "Saving..." : "Save")
+    </button>
+
+    <a class="btn btn-secondary ms-2" href="/customers">Cancel</a>
+</EditForm>
+
+@if (!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <p class="text-danger mt-3">@_errorMessage</p>
+}
