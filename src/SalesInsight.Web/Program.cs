@@ -20,6 +20,12 @@ builder.Services.AddHttpClient<DashboardApiClient>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? throw new InvalidOperationException("API base URL is not configured."));
 });
+builder.Services.AddHttpClient<CustomerApiClient>(client =>
+{
+    client.BaseAddress = new Uri(
+        builder.Configuration["ApiBaseUrl"]
+        ?? throw new InvalidOperationException("API base URL is not configured."));
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

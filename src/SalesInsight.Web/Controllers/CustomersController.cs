@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SalesInsight.Application.Commands.Customers;
 using SalesInsight.Application.DTOs.Customer;
@@ -18,19 +17,19 @@ public class CustomersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<CustomerResponse>>> GetCustomersAsync()
+    public async Task<ActionResult<List<CustomerResponse>>> GetCustomersAsync( CancellationToken cancellationToken)
     {
-        var customers = await _mediator.Send(new GetCustomersQuery());
+        var customers = await _mediator.Send(new GetCustomersQuery(),cancellationToken);
         return Ok(customers);
     
     }
 
-    [HttpGet("id: guid")]
-    public async Task<ActionResult<CustomerResponse>> GetCustomerAsync(Guid id)
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<CustomerResponse>> GetCustomerById(Guid id, CancellationToken cancellationToken)
     {
-        var customer = await _mediator.Send(new GetCustomerByIdQuery(id));
+        var customer = await _mediator.Send(new GetCustomerByIdQuery(id), cancellationToken);
         if(customer == null) {
-                 return NotFound();
+             return NotFound();
         }
         return Ok(customer);
     }
@@ -38,12 +37,12 @@ public class CustomersController : ControllerBase
 
     [HttpPost]
 
-    public async Task<ActionResult<Guid>> CreateCustomer(CreateCustomerRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult> CreateCustomer(CreateCustomerRequest request, CancellationToken cancellationToken)
     {
         var command = new CreateCustomerCommand(request.CompanyName, request.ContactName, request.Email);
         var customerId = await _mediator.Send(command,cancellationToken);
-        return CreatedAtAction(nameof(GetCustomerAsync), new { id = customerId }, customerId);
-
+        return CreatedAtAction(nameof(GetCustomerById), new { id = customerId }, customerId);
+       // return customerId;
     }
 
 }

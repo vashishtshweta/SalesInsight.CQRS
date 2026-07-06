@@ -1,1 +1,39 @@
 ﻿@page "/customers"
+
+<h1>Customers</h1>
+
+<a href="/customers/create">Add Customer</a>
+
+<a class="btn btn-primary mb-3" href="/customers/create">Add Customer</a>
+
+
+@if (_customers is null)
+{
+    <p>Loading customers...</p>
+}
+else if (!_customers.Any())
+{
+    <p>No customers found.</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Company</th>
+                <th>Contact</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in _customers)
+            {
+                <tr>
+                    <td>@customer.CompanyName</td>
+                    <td>@customer.ContactName</td>
+                    <td>@customer.Email</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

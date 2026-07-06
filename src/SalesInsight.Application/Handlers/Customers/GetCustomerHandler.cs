@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SalesInsight.Application.DTOs.Customer;
 using SalesInsight.Application.Interfaces;
@@ -19,20 +20,19 @@ namespace SalesInsight.Application.Handlers.Customers
 
         public async Task<CustomerResponse?> Handle(GetCustomerByIdQuery request, CancellationToken cancellationToken)
         {
-            var customer = await _context.Customers.FindAsync(new object[] { request }, cancellationToken);
-            if (customer == null)
-            {
-                _logger.LogWarning(  "Customer with ID {CustomerId} was not found.",  request.CustomerId);
-                return null;
-            }
-            return new CustomerResponse
-            {
-                CustomerId = customer.Id,
-                CompanyName = customer.CompanyName,
-                ContactName = customer.ContactName,
-                Email = customer.Email,
-                CreatedAt = customer.CreatedAt
-            };
+            return await _context.Customers
+                            .AsNoTracking()
+                            .Where(c => c.Id == request.CustomerId)
+                            .Select(c => new CustomerResponse
+                            {
+                                CustomerId = c.Id,
+                                CompanyName = c.CompanyName,
+                                ContactName = c.ContactName,
+                                Email = c.Email,
+                                CreatedAt = c.CreatedAt
+                            })
+                            .FirstOrDefaultAsync(cancellationToken);
+
         }
     }
 }

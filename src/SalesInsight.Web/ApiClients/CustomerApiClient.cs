@@ -1,4 +1,5 @@
 ﻿using SalesInsight.Application.DTOs.Customer;
+using System.Net;
 
 namespace SalesInsight.Web.ApiClients
 {
@@ -19,28 +20,22 @@ namespace SalesInsight.Web.ApiClients
 
         public async Task<List<CustomerResponse>> GetCustomersAsync(CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync(ApiRoutes.CustomersBase, cancellationToken);
-            response.EnsureSuccessStatusCode();
-            var customers = await response.Content.ReadFromJsonAsync<List<CustomerResponse>>(cancellationToken: cancellationToken);
+            var customers = await _httpClient.GetFromJsonAsync<List<CustomerResponse>>( ApiRoutes.CustomersBase, cancellationToken);
+
             return customers ?? new List<CustomerResponse>();
         }
 
         public async Task<CustomerResponse?> GetCustomerAsync(Guid customerId, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient.GetAsync($"{ApiRoutes.CustomersBase}/{customerId}", cancellationToken);
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadFromJsonAsync<CustomerResponse>(cancellationToken: cancellationToken);
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            if (response.StatusCode == HttpStatusCode.NotFound)
             {
                 return null;
             }
-            else
-            {
-                response.EnsureSuccessStatusCode();
-                return null; // This line will never be reached due to the above line throwing an exception.
-            }
+
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<CustomerResponse>( cancellationToken: cancellationToken);
         }
     }
 }
