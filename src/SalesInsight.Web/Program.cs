@@ -7,6 +7,9 @@ using SalesInsight.Web.ExceptionHandling;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<AppDbContext>("database");
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -23,8 +26,9 @@ builder.Services.AddHttpClient<CustomerApiClient>(client =>
         builder.Configuration["ApiBaseUrl"]
         ?? throw new InvalidOperationException("API base URL is not configured."));
 });
-var app = builder.Build();
 
+var app = builder.Build();
+app.MapHealthChecks("/health");
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

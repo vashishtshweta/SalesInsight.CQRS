@@ -11,7 +11,7 @@
 {
     <p>Loading customers...</p>
 }
-else if (!_customers.Any())
+else if (!_customers.Items.Any())
 {
     <p>No customers found.</p>
 }
@@ -26,7 +26,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var customer in _customers)
+            @foreach (var customer in _customers.Items)
             {
                 <tr>
                     <td>@customer.CompanyName</td>

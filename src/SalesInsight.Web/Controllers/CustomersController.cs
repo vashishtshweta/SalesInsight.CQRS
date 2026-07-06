@@ -17,9 +17,11 @@ public class CustomersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<CustomerResponse>>> GetCustomersAsync( CancellationToken cancellationToken)
+    public async Task<ActionResult<List<CustomerResponse>>> GetCustomersAsync( [FromQuery] int pageNumber =1,
+        [FromQuery] int pageSize =10,
+        [FromQuery] string? searchTerm = null, CancellationToken cancellationToken = default)
     {
-        var customers = await _mediator.Send(new GetCustomersQuery(),cancellationToken);
+        var customers = await _mediator.Send(new GetCustomersQuery(pageNumber, pageSize, searchTerm ),cancellationToken);
         return Ok(customers);
     
     }

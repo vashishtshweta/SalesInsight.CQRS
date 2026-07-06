@@ -1,4 +1,5 @@
-﻿using SalesInsight.Application.DTOs.Customer;
+﻿using SalesInsight.Application.DTOs.Common;
+using SalesInsight.Application.DTOs.Customer;
 using System.Net;
 
 namespace SalesInsight.Web.ApiClients
@@ -18,11 +19,18 @@ namespace SalesInsight.Web.ApiClients
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task<List<CustomerResponse>> GetCustomersAsync(CancellationToken cancellationToken = default)
+        public async Task<PagedResult<CustomerResponse>> GetCustomersAsync(int pageNumber = 1, int pageSize = 10, string? searchTerm = null,
+            CancellationToken cancellationToken = default)
         {
-            var customers = await _httpClient.GetFromJsonAsync<List<CustomerResponse>>( ApiRoutes.CustomersBase, cancellationToken);
+            var url = $"{ApiRoutes.CustomersBase}?pageNumber={pageNumber}&pageSize={pageSize}";
 
-            return customers ?? new List<CustomerResponse>();
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                url += $"&searchTerm={Uri.EscapeDataString(searchTerm)}";
+            }
+            var customers = await _httpClient.GetFromJsonAsync<PagedResult<CustomerResponse>>( url, cancellationToken);
+
+            return customers ?? new PagedResult<CustomerResponse>();
         }
 
         public async Task<CustomerResponse?> GetCustomerAsync(Guid customerId, CancellationToken cancellationToken = default)
